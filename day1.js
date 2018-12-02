@@ -24,7 +24,7 @@ console.log("day1");
 const freqChanges = [];
 
 Promise.resolve().then(() => {
-	return readlines('frequency-changes.txt', (line) => {
+	return readlines('day1-input.txt', (line) => {
 		freqChanges.push(parseInt(line, 10));
 	});
 }).then(() => {
