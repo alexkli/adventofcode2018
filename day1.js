@@ -8,20 +8,55 @@ function readlines(filename, lineFn) {
 		  crlfDelay: Infinity
 		});
 
-		rl.on('line', lineFn);
-		rl.on('close', resolve);
+		let lastResult;
+		rl.on('line', (line) => {
+			lastResult = lineFn(line);
+		});
+		rl.on('close', () => {
+			resolve(lastResult);
+		});
 	})
 }
 
+// ————————————————————————————————————————————————————
 console.log("day1");
 
-let freq = 0;
-readlines('frequency-changes.txt', (line) => {
-	freq += parseInt(line, 10);
+const freqChanges = [];
+
+Promise.resolve().then(() => {
+	return readlines('frequency-changes.txt', (line) => {
+		freqChanges.push(parseInt(line, 10));
+	});
 }).then(() => {
+	let freq = 0;
+	freqChanges.forEach(change => {
+		freq += change;
+	});
 	console.log(freq);
-}).then(() => {
+
+}).then(() => {	
+	console.log("part 2");
 	
-	//console.log("part 2");
-	
+	let seenFreqs = {};
+	seenFreqs[0] = true;
+	let firstRepeatedFreq;
+
+	let freq = 0;
+	for (let i = 0; i < 10000; i++) {
+		if (
+			freqChanges.some(change => {
+				freq += change;
+				if (seenFreqs[freq]) {
+					firstRepeatedFreq = freq;
+					console.log(`${freq} (after ${i} loops)`);
+					return true;
+				}
+				seenFreqs[freq] = true;
+				return false;
+			})
+		) { break; }
+	}
+	if (firstRepeatedFreq === undefined) {
+		console.log('no repeated frequency found in 10000 loops');
+	}
 });
